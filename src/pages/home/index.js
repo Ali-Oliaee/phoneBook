@@ -18,7 +18,6 @@ const HomePage = () => {
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [loading, setLoading] = useState(false);
   const location = useLocation();
   const [searchParam, setSearchParam] = useSearchParams();
   const QS = qs.parse(location.search);
@@ -33,8 +32,11 @@ const HomePage = () => {
     getUsersDate();
   }, []);
 
-  const getUserData = (id) =>
-    axios.get(`http://localhost:8000/user/${id}`).then(({ data }) => data);
+  // const getUserData = (id) =>
+  //   axios.get(`http://localhost:8000/user/${id}`).then(({ data }) => data);
+
+  const getUserDateById = (givenId) =>
+    users?.find((user) => user.id === givenId);
 
   const deleteUser = ({ id }) =>
     axios
@@ -52,7 +54,7 @@ const HomePage = () => {
     <div className="home-page">
       <div className="table-header">
         <h1>users</h1>
-        <Input
+        <Input.Search
           size="large"
           placeholder="Search user"
           className="search-input"
@@ -105,7 +107,7 @@ const HomePage = () => {
       <EditUserModal
         visible={editModalVisible}
         setVisible={setEditModalVisible}
-        user={getUserData(QS.id) || -1}
+        user={getUserDateById(Number(QS.id)) || -1}
       />
     </div>
   );

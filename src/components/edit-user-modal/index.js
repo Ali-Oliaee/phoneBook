@@ -1,13 +1,27 @@
-import { Modal, Button, Form, Input } from "antd";
+import { Modal, Button, Form, Input, message } from "antd";
 import axios from "axios";
 
 const EditUserModal = ({ visible, setVisible, user }) => {
   const [form] = Form.useForm();
-  form.resetFields();
-  console.log("user", user);
-  const editUser = (values) => {
-    // axios.patch("http://localhost:8000/edit-user/", {});
+  const editUser = ({ name, email, phone }) => {
+    axios
+      .patch("http://localhost:8000/edit-user/", {
+        id: user.id,
+        name,
+        email,
+        phone,
+      })
+      .then(({ data }) => {
+        setVisible(false);
+        message.success(data);
+      });
   };
+
+  form.setFieldsValue({
+    name: user.name || "",
+    email: user.email || "",
+    phone: user.phone || "",
+  });
 
   return (
     <Modal
