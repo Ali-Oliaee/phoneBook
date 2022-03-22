@@ -1,9 +1,23 @@
-import { Modal, Button, Form, Input } from "antd";
+import { Modal, Button, Form, Input, message } from "antd";
+import axios from "axios";
+import { useState } from "react";
 
 const AddUserModal = ({ visible, setVisible }) => {
   const [form] = Form.useForm();
-  const addUser = (values) => {
-    console.log("values", values);
+  const [loading, setLoading] = useState(false);
+  const addUser = ({ name, email, phone }) => {
+    setLoading(true);
+    axios
+      .post("http://localhost:8000/add-user/", {
+        name,
+        email,
+        phone,
+      })
+      .then(({ data }) => {
+        message.success(data);
+        setVisible(false);
+      })
+      .finally(setLoading(false));
   };
   form.resetFields();
   return (
@@ -61,7 +75,13 @@ const AddUserModal = ({ visible, setVisible }) => {
         >
           <Input placeholder="phone number" type="number" size="large" />
         </Form.Item>
-        <Button type="primary" block size="large" htmlType="submit">
+        <Button
+          type="primary"
+          block
+          size="large"
+          htmlType="submit"
+          loading={loading}
+        >
           submit
         </Button>
       </Form>

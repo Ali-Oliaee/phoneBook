@@ -5,29 +5,25 @@ import {
   QuestionCircleOutlined,
   UserAddOutlined,
 } from "@ant-design/icons";
-import { useState } from "react";
-import "./style.scss";
+import { useEffect, useState } from "react";
 import AddUserModal from "../../components/add-user-modal";
 import EditUserModal from "../../components/edit-user-modal";
+import axios from "axios";
+import "./style.scss";
 
 const HomePage = () => {
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
+  const [users, setUsers] = useState();
 
-  const dataSource = [
-    {
-      key: "1",
-      name: "Mike",
-      age: 32,
-      address: "10 Downing Street",
-    },
-    {
-      key: "2",
-      name: "John",
-      age: 42,
-      address: "10 Downing Street",
-    },
-  ];
+  const getUserDate = () =>
+    axios
+      .get("http://localhost:8000/users/")
+      .then(({ data }) => setUsers(data));
+
+  useEffect(() => {
+    getUserDate();
+  }, []);
 
   const columns = [
     {
@@ -36,14 +32,14 @@ const HomePage = () => {
       key: "name",
     },
     {
-      title: "Age",
-      dataIndex: "age",
-      key: "age",
+      title: "email",
+      dataIndex: "email",
+      key: "email",
     },
     {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
+      title: "phone number",
+      dataIndex: "phone",
+      key: "phone",
     },
     {
       title: "Action",
@@ -75,7 +71,7 @@ const HomePage = () => {
         </Button>
       </div>
       <Table
-        dataSource={dataSource}
+        dataSource={users}
         columns={columns}
         pagination={false}
         bordered
