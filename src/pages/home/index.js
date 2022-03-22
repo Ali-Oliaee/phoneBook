@@ -8,25 +8,33 @@ import {
 import { useEffect, useState } from "react";
 import AddUserModal from "../../components/add-user-modal";
 import EditUserModal from "../../components/edit-user-modal";
+import { useLocation, useSearchParams } from "react-router-dom";
 import axios from "axios";
+import qs from "query-string";
 import Fuse from "fuse.js";
 import "./style.scss";
 
 const HomePage = () => {
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
-  const [searchParam, setSearchParam] = useState("");
+  const [searchValue, setSearchValue] = useState("");
   const [loading, setLoading] = useState(false);
+  const location = useLocation();
+  const [searchParam, setSearchParam] = useSearchParams();
+  const QS = qs.parse(location.search);
   const [users, setUsers] = useState();
 
-  const getUserDate = () =>
+  const getUsersDate = () =>
     axios
       .get("http://localhost:8000/users/")
       .then(({ data }) => setUsers(data));
 
   useEffect(() => {
-    getUserDate();
+    getUsersDate();
   }, []);
+
+  const getUserData = (id) =>
+    axios.get(`http://localhost:8000/user/${id}`).then(({ data }) => data);
 
   const deleteUser = ({ id }) =>
     axios
@@ -36,8 +44,8 @@ const HomePage = () => {
   const fuse = new Fuse(users || [], {
     keys: ["name", "email", "phone"],
   });
-  const results = searchParam
-    ? fuse.search(searchParam).map(({ item }) => item)
+  const results = searchValue
+    ? fuse.search(searchValue).map(({ item }) => item)
     : users;
 
   return (
@@ -48,7 +56,7 @@ const HomePage = () => {
           size="large"
           placeholder="Search user"
           className="search-input"
-          onChange={(e) => setSearchParam(e.target.value)}
+          onChange={(e) => setSearchValue(e.target.value)}
         />
         <Button
           type="primary"
@@ -71,19 +79,22 @@ const HomePage = () => {
           title="Actions"
           dataIndex="actions"
           key="actions"
-          render={(row, id) => {
+          render={(row, user) => {
             return (
               <Space size="middle">
                 <Popconfirm
                   title="Are you sure？"
                   icon={<QuestionCircleOutlined />}
-                  onConfirm={() => deleteUser(id)}
+                  onConfirm={() => deleteUser(user)}
                 >
                   <Button danger icon={<DeleteOutlined />} />
                 </Popconfirm>
                 <Button
                   icon={<EditFilled />}
-                  onClick={() => setEditModalVisible(true)}
+                  onClick={() => {
+                    setSearchParam({ id: user.id });
+                    setEditModalVisible(true);
+                  }}
                 />
               </Space>
             );
@@ -94,6 +105,7 @@ const HomePage = () => {
       <EditUserModal
         visible={editModalVisible}
         setVisible={setEditModalVisible}
+        user={getUserData(QS.id) || -1}
       />
     </div>
   );
