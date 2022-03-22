@@ -1,8 +1,19 @@
-import { Table, Space, Button } from "antd";
-import { DeleteOutlined, EditFilled, UserAddOutlined } from "@ant-design/icons";
+import { Table, Space, Button, Popconfirm } from "antd";
+import {
+  DeleteOutlined,
+  EditFilled,
+  QuestionCircleOutlined,
+  UserAddOutlined,
+} from "@ant-design/icons";
+import { useState } from "react";
 import "./style.scss";
+import AddUserModal from "../../components/add-user-modal";
+import EditUserModal from "../../components/edit-user-modal";
 
 const HomePage = () => {
+  const [addModalVisible, setAddModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+
   const dataSource = [
     {
       key: "1",
@@ -39,8 +50,13 @@ const HomePage = () => {
       key: "action",
       render: () => (
         <Space size="middle">
-          <Button danger icon={<DeleteOutlined />} />
-          <Button icon={<EditFilled />} />
+          <Popconfirm title="Are you sure？" icon={<QuestionCircleOutlined />}>
+            <Button danger icon={<DeleteOutlined />} />
+          </Popconfirm>
+          <Button
+            icon={<EditFilled />}
+            onClick={() => setEditModalVisible(true)}
+          />
         </Space>
       ),
     },
@@ -49,8 +65,12 @@ const HomePage = () => {
   return (
     <div className="home-page">
       <div className="table-header">
-        <h3>users</h3>
-        <Button type="primary" icon={<UserAddOutlined />}>
+        <h1>users</h1>
+        <Button
+          type="primary"
+          icon={<UserAddOutlined />}
+          onClick={() => setAddModalVisible(true)}
+        >
           Add user
         </Button>
       </div>
@@ -60,6 +80,11 @@ const HomePage = () => {
         pagination={false}
         bordered
         className="users-table"
+      />
+      <AddUserModal visible={addModalVisible} setVisible={setAddModalVisible} />
+      <EditUserModal
+        visible={editModalVisible}
+        setVisible={setEditModalVisible}
       />
     </div>
   );
