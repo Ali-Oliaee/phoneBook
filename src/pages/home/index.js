@@ -1,4 +1,4 @@
-import { Table, Space, Button, Popconfirm } from "antd";
+import { Table, Space, Button, Popconfirm, message } from "antd";
 import {
   DeleteOutlined,
   EditFilled,
@@ -14,6 +14,7 @@ import "./style.scss";
 const HomePage = () => {
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState();
 
   const getUserDate = () =>
@@ -25,38 +26,10 @@ const HomePage = () => {
     getUserDate();
   }, []);
 
-  const columns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "phone number",
-      dataIndex: "phone",
-      key: "phone",
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: () => (
-        <Space size="middle">
-          <Popconfirm title="Are you sure？" icon={<QuestionCircleOutlined />}>
-            <Button danger icon={<DeleteOutlined />} />
-          </Popconfirm>
-          <Button
-            icon={<EditFilled />}
-            onClick={() => setEditModalVisible(true)}
-          />
-        </Space>
-      ),
-    },
-  ];
+  const deleteUser = ({ id }) =>
+    axios
+      .delete(`http://localhost:8000/delete-user/${id}`)
+      .then(({ data }) => message.success(data));
 
   return (
     <div className="home-page">
@@ -72,11 +45,36 @@ const HomePage = () => {
       </div>
       <Table
         dataSource={users}
-        columns={columns}
         pagination={false}
         bordered
         className="users-table"
-      />
+      >
+        <Table.Column title="Name" dataIndex="name" key="name" />
+        <Table.Column title="Email" dataIndex="email" key="email" />
+        <Table.Column title="Phone number" dataIndex="phone" key="phone" />
+        <Table.Column
+          title="Actions"
+          dataIndex="actions"
+          key="actions"
+          render={(row, id) => {
+            return (
+              <Space size="middle">
+                <Popconfirm
+                  title="Are you sure？"
+                  icon={<QuestionCircleOutlined />}
+                  onConfirm={() => deleteUser(id)}
+                >
+                  <Button danger icon={<DeleteOutlined />} />
+                </Popconfirm>
+                <Button
+                  icon={<EditFilled />}
+                  onClick={() => setEditModalVisible(true)}
+                />
+              </Space>
+            );
+          }}
+        />
+      </Table>
       <AddUserModal visible={addModalVisible} setVisible={setAddModalVisible} />
       <EditUserModal
         visible={editModalVisible}
