@@ -1,4 +1,4 @@
-import { Table, Space, Button, Popconfirm, message } from "antd";
+import { Table, Space, Button, Popconfirm, message, Input } from "antd";
 import {
   DeleteOutlined,
   EditFilled,
@@ -9,11 +9,13 @@ import { useEffect, useState } from "react";
 import AddUserModal from "../../components/add-user-modal";
 import EditUserModal from "../../components/edit-user-modal";
 import axios from "axios";
+import Fuse from "fuse.js";
 import "./style.scss";
 
 const HomePage = () => {
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
+  const [searchParam, setSearchParam] = useState("");
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState();
 
@@ -31,10 +33,23 @@ const HomePage = () => {
       .delete(`http://localhost:8000/delete-user/${id}`)
       .then(({ data }) => message.success(data));
 
+  const fuse = new Fuse(users || [], {
+    keys: ["name", "email", "phone"],
+  });
+  const results = searchParam
+    ? fuse.search(searchParam).map(({ item }) => item)
+    : users;
+
   return (
     <div className="home-page">
       <div className="table-header">
         <h1>users</h1>
+        <Input
+          size="large"
+          placeholder="Search user"
+          className="search-input"
+          onChange={(e) => setSearchParam(e.target.value)}
+        />
         <Button
           type="primary"
           icon={<UserAddOutlined />}
@@ -44,7 +59,7 @@ const HomePage = () => {
         </Button>
       </div>
       <Table
-        dataSource={users}
+        dataSource={results}
         pagination={false}
         bordered
         className="users-table"

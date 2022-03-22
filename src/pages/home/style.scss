@@ -12,7 +12,14 @@
     justify-content: space-between;
     width: 80%;
     margin: 20px 0;
+
+    .search-input {
+      flex: 1;
+      justify-self: flex-start;
+      margin: 0 80px 0 20px;
+    }
   }
+
   .users-table {
     width: 80%;
   }
