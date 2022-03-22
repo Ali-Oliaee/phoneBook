@@ -1,9 +1,11 @@
 import { Modal, Button, Form, Input } from "antd";
 
 const AddUserModal = ({ visible, setVisible }) => {
+  const [form] = Form.useForm();
   const addUser = (values) => {
     console.log("values", values);
   };
+  form.resetFields();
   return (
     <Modal
       title="Add user"
@@ -12,18 +14,52 @@ const AddUserModal = ({ visible, setVisible }) => {
       footer={false}
       closable
     >
-      <Form onFinish={addUser}>
+      <Form onFinish={addUser} form={form}>
         <h3>name</h3>
-        <Form.Item name="name">
+        <Form.Item
+          name="name"
+          rules={[
+            {
+              required: true,
+              message: "user name is required!",
+            },
+          ]}
+        >
           <Input placeholder="name" size="large" />
         </Form.Item>
         <h3>email</h3>
-        <Form.Item name="email">
+        <Form.Item
+          name="email"
+          rules={[
+            {
+              required: true,
+              message: "user email is required!",
+            },
+            {
+              type: "email",
+              message: "please enter a valid email!",
+            },
+          ]}
+        >
           <Input placeholder="email" size="large" />
         </Form.Item>
         <h3>phone number</h3>
-        <Form.Item name="phone">
-          <Input placeholder="phone number" size="large" />
+        <Form.Item
+          name="phone"
+          rules={[
+            {
+              required: true,
+              message: "user phone number is required!",
+            },
+            {
+              min: 2,
+            },
+            {
+              max: 10,
+            },
+          ]}
+        >
+          <Input placeholder="phone number" type="number" size="large" />
         </Form.Item>
         <Button type="primary" block size="large" htmlType="submit">
           submit
