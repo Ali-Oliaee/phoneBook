@@ -1,9 +1,8 @@
+import HomePage from "./pages/home";
+import "antd/dist/antd.css";
+
 function App() {
-  return (
-    <div className="App">
-      <h1>test</h1>
-    </div>
-  );
+  return <HomePage />;
 }
 
 export default App;
