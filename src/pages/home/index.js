@@ -17,16 +17,14 @@ import { getUsersData } from "../../utils/api";
 import "./style.scss";
 
 const HomePage = () => {
-  const [addModalVisible, setAddModalVisible] = useState(false);
-  const [editModalVisible, setEditModalVisible] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const location = useLocation();
   const [searchParam, setSearchParam] = useSearchParams();
+  const location = useLocation();
   const QS = qs.parse(location.search);
 
   const { data: users, isLoading, refetch } = useQuery("users", getUsersData);
 
-  const getUserDateById = (givenId) =>
+  const getUserDataById = (givenId) =>
     users?.find((user) => user.id === givenId);
 
   const deleteUser = ({ id }) =>
@@ -42,7 +40,7 @@ const HomePage = () => {
     ? fuse.search(searchValue).map(({ item }) => item)
     : users;
 
-  isLoading && <Spin />;
+  if (isLoading) return <Spin />;
 
   return (
     <div className="home-page">
@@ -57,17 +55,12 @@ const HomePage = () => {
         <Button
           type="primary"
           icon={<UserAddOutlined />}
-          onClick={() => setAddModalVisible(true)}
+          onClick={() => setSearchParam("add=true")}
         >
           Add user
         </Button>
       </div>
-      <Table
-        dataSource={results}
-        pagination={false}
-        bordered
-        className="users-table"
-      >
+      <Table dataSource={results} pagination={false} className="users-table">
         <Table.Column title="Name" dataIndex="name" key="name" />
         <Table.Column title="Email" dataIndex="email" key="email" />
         <Table.Column title="Phone number" dataIndex="phone" key="phone" />
@@ -87,21 +80,18 @@ const HomePage = () => {
                 </Popconfirm>
                 <Button
                   icon={<EditFilled />}
-                  onClick={() => {
-                    setSearchParam({ id: user.id });
-                    setEditModalVisible(true);
-                  }}
+                  onClick={() => setSearchParam(`edit=true&id=${user.id}`)}
                 />
               </Space>
             );
           }}
         />
       </Table>
-      <AddUserModal visible={addModalVisible} setVisible={setAddModalVisible} />
+      <AddUserModal visible={QS.add} refetch={refetch} />
       <EditUserModal
-        visible={editModalVisible}
-        setVisible={setEditModalVisible}
-        user={getUserDateById(Number(QS.id)) || -1}
+        visible={QS.edit}
+        user={getUserDataById(Number(QS.id)) || -1}
+        refetch={refetch}
       />
     </div>
   );

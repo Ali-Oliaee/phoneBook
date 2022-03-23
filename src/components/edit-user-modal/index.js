@@ -1,10 +1,10 @@
 import { Modal, Button, Form, Input, message } from "antd";
-import { useQueryClient } from "react-query";
 import axios from "../../utils/axios";
+import { useSearchParams } from "react-router-dom";
 
-const EditUserModal = ({ visible, setVisible, user }) => {
+const EditUserModal = ({ visible, user, refetch }) => {
   const [form] = Form.useForm();
-  const queryClient = useQueryClient();
+  const [searchParam, setSearchParam] = useSearchParams();
   const editUser = ({ name, email, phone }) => {
     axios
       .patch("edit-user/", {
@@ -14,25 +14,26 @@ const EditUserModal = ({ visible, setVisible, user }) => {
         phone,
       })
       .then(({ data }) => {
-        setVisible(false);
         message.success(data);
-        queryClient.invalidateQueries("users");
+        setSearchParam("");
+        refetch();
       });
   };
 
   form.setFieldsValue({
-    name: user.name || "",
-    email: user.email || "",
-    phone: user.phone || "",
+    name: user?.name,
+    email: user?.email,
+    phone: user?.phone,
   });
 
   return (
     <Modal
       title="Edit user"
       visible={visible}
-      onCancel={() => setVisible(false)}
+      onCancel={() => setSearchParam("")}
       footer={false}
       closable
+      getContainer={false}
     >
       <Form onFinish={editUser} form={form}>
         <h3>name</h3>
