@@ -1,11 +1,11 @@
 import { Modal, Button, Form, Input, message } from "antd";
-import axios from "axios";
+import axios from "../../utils/axios";
 
 const EditUserModal = ({ visible, setVisible, user }) => {
   const [form] = Form.useForm();
   const editUser = ({ name, email, phone }) => {
     axios
-      .patch("http://localhost:8000/edit-user/", {
+      .patch("edit-user/", {
         id: user.id,
         name,
         email,

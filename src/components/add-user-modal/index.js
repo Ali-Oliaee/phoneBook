@@ -1,5 +1,5 @@
 import { Modal, Button, Form, Input, message } from "antd";
-import axios from "axios";
+import axios from "../../utils/axios";
 import { useState } from "react";
 
 const AddUserModal = ({ visible, setVisible }) => {
@@ -8,7 +8,7 @@ const AddUserModal = ({ visible, setVisible }) => {
   const addUser = ({ name, email, phone }) => {
     setLoading(true);
     axios
-      .post("http://localhost:8000/add-user/", {
+      .post("add-user/", {
         name,
         email,
         phone,

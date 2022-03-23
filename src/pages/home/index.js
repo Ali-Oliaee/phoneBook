@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import AddUserModal from "../../components/add-user-modal";
 import EditUserModal from "../../components/edit-user-modal";
 import { useLocation, useSearchParams } from "react-router-dom";
-import axios from "axios";
+import axios from '../../utils/axios'
 import qs from "query-string";
 import Fuse from "fuse.js";
 import "./style.scss";
@@ -25,7 +25,7 @@ const HomePage = () => {
 
   const getUsersDate = () =>
     axios
-      .get("http://localhost:8000/users/")
+      .get("users/")
       .then(({ data }) => setUsers(data));
 
   useEffect(() => {
@@ -33,14 +33,14 @@ const HomePage = () => {
   }, []);
 
   // const getUserData = (id) =>
-  //   axios.get(`http://localhost:8000/user/${id}`).then(({ data }) => data);
+  //   axios.get(`user/${id}`).then(({ data }) => data);
 
   const getUserDateById = (givenId) =>
     users?.find((user) => user.id === givenId);
 
   const deleteUser = ({ id }) =>
     axios
-      .delete(`http://localhost:8000/delete-user/${id}`)
+      .delete(`delete-user/${id}`)
       .then(({ data }) => message.success(data));
 
   const fuse = new Fuse(users || [], {
