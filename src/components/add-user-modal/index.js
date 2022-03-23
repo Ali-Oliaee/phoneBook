@@ -1,10 +1,12 @@
 import { Modal, Button, Form, Input, message } from "antd";
 import axios from "../../utils/axios";
+import { useQueryClient } from "react-query";
 import { useState } from "react";
 
 const AddUserModal = ({ visible, setVisible }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
   const addUser = ({ name, email, phone }) => {
     setLoading(true);
     axios
@@ -16,6 +18,7 @@ const AddUserModal = ({ visible, setVisible }) => {
       .then(({ data }) => {
         message.success(data);
         setVisible(false);
+        queryClient.invalidateQueries("users");
       })
       .finally(setLoading(false));
   };

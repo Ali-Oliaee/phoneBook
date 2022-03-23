@@ -1,8 +1,10 @@
 import { Modal, Button, Form, Input, message } from "antd";
+import { useQueryClient } from "react-query";
 import axios from "../../utils/axios";
 
 const EditUserModal = ({ visible, setVisible, user }) => {
   const [form] = Form.useForm();
+  const queryClient = useQueryClient();
   const editUser = ({ name, email, phone }) => {
     axios
       .patch("edit-user/", {
@@ -14,6 +16,7 @@ const EditUserModal = ({ visible, setVisible, user }) => {
       .then(({ data }) => {
         setVisible(false);
         message.success(data);
+        queryClient.invalidateQueries("users");
       });
   };
 
