@@ -11,10 +11,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 const con = mysql.createConnection({
-  database: "test",
-  host: "localhost",
-  user: "root",
-  password: "a@138080aA",
+  // put your connection info here
+  database: "",
+  host: "",
+  user: "",
+  password: "",
 });
 
 con.connect();
