@@ -1,46 +1,44 @@
-import { Table, Space, Button, Popconfirm, message, Input, Spin } from "antd";
+import { Table, Space, Button, Popconfirm, message, Input } from "antd"
 import {
   DeleteOutlined,
   EditFilled,
   QuestionCircleOutlined,
   UserAddOutlined,
-} from "@ant-design/icons";
-import { useQuery } from "react-query";
-import { useState } from "react";
-import AddUserModal from "../../components/add-user-modal";
-import EditUserModal from "../../components/edit-user-modal";
-import { useLocation, useSearchParams } from "react-router-dom";
-import axios from "../../utils/axios";
-import qs from "query-string";
-import Fuse from "fuse.js";
-import { getUsersData } from "../../utils/api";
-import "./style.scss";
+} from "@ant-design/icons"
+import { useQuery } from "react-query"
+import { useState } from "react"
+import AddUserModal from "../../components/add-user-modal"
+import EditUserModal from "../../components/edit-user-modal"
+import { useLocation, useSearchParams } from "react-router-dom"
+import axios from "../../utils/axios"
+import qs from "query-string"
+import Fuse from "fuse.js"
+import { getUsersData } from "../../utils/api"
+import "./style.scss"
 
 const HomePage = () => {
-  const [searchValue, setSearchValue] = useState("");
-  const [searchParam, setSearchParam] = useSearchParams();
-  const location = useLocation();
-  const QS = qs.parse(location.search);
+  const [searchValue, setSearchValue] = useState("")
+  const [searchParam, setSearchParam] = useSearchParams()
+  const location = useLocation()
+  const QS = qs.parse(location.search)
 
-  const { data: users, isLoading, refetch } = useQuery("users", getUsersData);
+  const { data: users, isLoading, refetch } = useQuery("users", getUsersData)
 
   const getUserDataById = (givenId) =>
-    users?.find((user) => user.id === givenId);
+    users?.find((user) => user.id === givenId)
 
   const deleteUser = ({ id }) =>
     axios.delete(`delete-user/${id}`).then(({ data }) => {
-      message.success(data);
-      refetch();
-    });
+      message.success(data)
+      refetch()
+    })
 
   const fuse = new Fuse(users || [], {
     keys: ["name", "email", "phone"],
-  });
+  })
   const results = searchValue
     ? fuse.search(searchValue).map(({ item }) => item)
-    : users;
-
-  if (isLoading) return <Spin />;
+    : users
 
   return (
     <div className="home-page">
@@ -60,7 +58,12 @@ const HomePage = () => {
           Add user
         </Button>
       </div>
-      <Table dataSource={results} pagination={false} className="users-table">
+      <Table
+        dataSource={results}
+        pagination={false}
+        className="users-table"
+        loading={isLoading}
+      >
         <Table.Column title="Name" dataIndex="name" key="name" />
         <Table.Column title="Email" dataIndex="email" key="email" />
         <Table.Column title="Phone number" dataIndex="phone" key="phone" />
@@ -72,7 +75,7 @@ const HomePage = () => {
             return (
               <Space size="middle">
                 <Popconfirm
-                  title="Are you sure？"
+                  title="Are you sure?"
                   icon={<QuestionCircleOutlined />}
                   onConfirm={() => deleteUser(user)}
                 >
@@ -83,7 +86,7 @@ const HomePage = () => {
                   onClick={() => setSearchParam(`edit=true&id=${user.id}`)}
                 />
               </Space>
-            );
+            )
           }}
         />
       </Table>
@@ -94,7 +97,7 @@ const HomePage = () => {
         refetch={refetch}
       />
     </div>
-  );
-};
+  )
+}
 
-export default HomePage;
+export default HomePage
