@@ -1,14 +1,14 @@
-import { Modal, Button, Form, Input, message } from "antd";
-import axios from "../../utils/axios";
-import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Modal, Button, Form, Input, message } from "antd"
+import axios from "../../utils/axios"
+import { useState } from "react"
+import { useSearchParams } from "react-router-dom"
 
 const AddUserModal = ({ visible, refetch }) => {
-  const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
-  const [searchParam, setSearchParam] = useSearchParams();
+  const [form] = Form.useForm()
+  const [loading, setLoading] = useState(false)
+  const [searchParam, setSearchParam] = useSearchParams()
   const addUser = ({ name, email, phone }) => {
-    setLoading(true);
+    setLoading(true)
     axios
       .post("add-user/", {
         name,
@@ -16,13 +16,17 @@ const AddUserModal = ({ visible, refetch }) => {
         phone,
       })
       .then(({ data }) => {
-        message.success(data);
-        setSearchParam("");
-        refetch();
+        message.success(data)
+        setSearchParam("")
+        refetch()
       })
-      .finally(setLoading(false));
-  };
-  form.resetFields();
+      .catch(() => {
+        message.error("Failed to add user, please try again later!")
+        setSearchParam("")
+      })
+      .finally(setLoading(false))
+  }
+  form.resetFields()
   return (
     <Modal
       title="Add user"
@@ -89,7 +93,7 @@ const AddUserModal = ({ visible, refetch }) => {
         </Button>
       </Form>
     </Modal>
-  );
-};
+  )
+}
 
-export default AddUserModal;
+export default AddUserModal
